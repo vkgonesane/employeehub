@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="main-content">
+  <div class="container container-narrow">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a th:href="@{/employees}"><i data-feather="home"></i> Employees</a>
+      <span class="breadcrumb-sep">/</span>
+      <span th:text="${pageTitle}"></span>
+    </nav>
+
+    <div class="form-card">
+      <div class="form-card-header">
+        <h2 th:text="${pageTitle}">Form</h2>
+      </div>
+
+      <form th:action="@{${formAction}}" th:object="${employee}" method="post" class="emp-form">
+
+        <div class="form-row">
+          <!-- First Name -->
+          <div class="form-group" th:classappend="${#fields.hasErrors('firstName')} ? 'has-error'">
+            <label for="firstName" class="form-label">First Name <span class="required">*</span></label>
+            <input type="text" id="firstName" th:field="*{firstName}"
+                   class="form-input" placeholder="e.g. Jane"/>
+            <span class="form-error" th:if="${#fields.hasErrors('firstName')}"
+                  th:errors="*{firstName}"></span>
+          </div>
+
+          <!-- Last Name -->
+          <div class="form-group" th:classappend="${#fields.hasErrors('lastName')} ? 'has-error'">
+            <label for="lastName" class="form-label">Last Name <span class="required">*</span></label>
+            <input type="text" id="lastName" th:field="*{lastName}"
+                   class="form-input" placeholder="e.g. Doe"/>
+            <span class="form-error" th:if="${#fields.hasErrors('lastName')}"
+                  th:errors="*{lastName}"></span>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group" th:classappend="${#fields.hasErrors('email')} ? 'has-error'">
+          <label for="email" class="form-label">Email <span class="required">*</span></label>
+          <input type="email" id="email" th:field="*{email}"
+                 class="form-input" placeholder="jane.doe@company.com"/>
+          <span class="form-error" th:if="${#fields.hasErrors('email')}"
+                th:errors="*{email}"></span>
+        </div>
+
+        <div class="form-row">
+          <!-- Department -->
+          <div class="form-group" th:classappend="${#fields.hasErrors('department')} ? 'has-error'">
+            <label for="department" class="form-label">Department <span class="required">*</span></label>
+            <input type="text" id="department" th:field="*{department}"
+                   list="deptList" class="form-input" placeholder="e.g. Engineering"/>
+            <datalist id="deptList">
+              <option th:each="d : ${departments}" th:value="${d}"></option>
+            </datalist>
+            <span class="form-error" th:if="${#fields.hasErrors('department')}"
+                  th:errors="*{department}"></span>
+          </div>
+
+          <!-- Position -->
+          <div class="form-group" th:classappend="${#fields.hasErrors('position')} ? 'has-error'">
+            <label for="position" class="form-label">Position <span class="required">*</span></label>
+            <input type="text" id="position" th:field="*{position}"
+                   class="form-input" placeholder="e.g. Senior Developer"/>
+            <span class="form-error" th:if="${#fields.hasErrors('position')}"
+                  th:errors="*{position}"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <!-- Salary -->
+          <div class="form-group" th:classappend="${#fields.hasErrors('salary')} ? 'has-error'">
+            <label for="salary" class="form-label">Salary (USD) <span class="required">*</span></label>
+            <div class="input-prefix">
+              <span class="prefix-text">$</span>
+              <input type="number" id="salary" th:field="*{salary}"
+                     class="form-input" min="1" step="0.01" placeholder="75000"/>
+            </div>
+            <span class="form-error" th:if="${#fields.hasErrors('salary')}"
+                  th:errors="*{salary}"></span>
+          </div>
+
+          <!-- Hire Date -->
+          <div class="form-group" th:classappend="${#fields.hasErrors('hireDate')} ? 'has-error'">
+            <label for="hireDate" class="form-label">Hire Date <span class="required">*</span></label>
+            <input type="date" id="hireDate" th:field="*{hireDate}"
+                   class="form-input"/>
+            <span class="form-error" th:if="${#fields.hasErrors('hireDate')}"
+                  th:errors="*{hireDate}"></span>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <div class="radio-group">
+            <label th:each="s : ${statuses}" class="radio-label">
+              <input type="radio" th:field="*{status}" th:value="${s}"/>
+              <span th:text="${s}"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Form actions -->
+        <div class="form-actions">
+          <a th:href="@{/employees}" class="btn btn-ghost">
+            <i data-feather="x"></i> Cancel
+          </a>
+          <button type="submit" class="btn btn-primary">
+            <i data-feather="save"></i>
+            <span th:text="${employee.id != null ? 'Save Changes' : 'Create Employee'}">Save</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:src="@{/js/app.js}"></script>
+<script>feather.replace();</script>
+</body>
+</html>

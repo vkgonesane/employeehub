@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Employees')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="main-content">
+  <div class="container">
+
+    <!-- ── Statistics Cards ───────────────────────────────────── -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" th:text="${stats.total}">0</div>
+        <div class="stat-label">Total Employees</div>
+      </div>
+      <div class="stat-card active">
+        <div class="stat-value" th:text="${stats.active}">0</div>
+        <div class="stat-label">Active</div>
+      </div>
+      <div class="stat-card leave">
+        <div class="stat-value" th:text="${stats.onLeave}">0</div>
+        <div class="stat-label">On Leave</div>
+      </div>
+      <div class="stat-card dept">
+        <div class="stat-value" th:text="${stats.departments}">0</div>
+        <div class="stat-label">Departments</div>
+      </div>
+    </div>
+
+    <!-- ── Flash Messages ─────────────────────────────────────── -->
+    <div th:if="${successMessage}" class="alert alert-success">
+      <i data-feather="check-circle"></i>
+      <span th:text="${successMessage}"></span>
+    </div>
+
+    <!-- ── Page Header ────────────────────────────────────────── -->
+    <div class="page-header">
+      <h1 class="page-title">Employees</h1>
+      <a th:href="@{/employees/new}" class="btn btn-primary">
+        <i data-feather="user-plus"></i> Add Employee
+      </a>
+    </div>
+
+    <!-- ── Search & Filter Bar ───────────────────────────────── -->
+    <div class="filter-bar">
+      <form th:action="@{/employees}" method="get" id="filterForm">
+        <div class="filter-row">
+          <div class="search-box">
+            <i data-feather="search" class="search-icon"></i>
+            <input type="text" name="search" id="search"
+                   class="form-input search-input"
+                   placeholder="Search by name, email, department…"
+                   th:value="${search}"/>
+          </div>
+          <select name="department" class="form-input filter-select"
+                  onchange="document.getElementById('filterForm').submit()">
+            <option value="">All Departments</option>
+            <option th:each="dept : ${departments}"
+                    th:value="${dept}"
+                    th:text="${dept}"
+                    th:selected="${dept == department}"></option>
+          </select>
+          <select name="status" class="form-input filter-select"
+                  onchange="document.getElementById('filterForm').submit()">
+            <option value="">All Statuses</option>
+            <option th:each="s : ${statuses}"
+                    th:value="${s}"
+                    th:text="${s.name()}"
+                    th:selected="${s == status}"></option>
+          </select>
+          <button type="submit" class="btn btn-secondary">
+            <i data-feather="filter"></i> Filter
+          </button>
+          <a th:href="@{/employees}" class="btn btn-ghost">
+            <i data-feather="x"></i> Clear
+          </a>
+        </div>
+        <!-- preserve sort on filter -->
+        <input type="hidden" name="sortBy" th:value="${sortBy}"/>
+        <input type="hidden" name="sortDir" th:value="${sortDir}"/>
+        <input type="hidden" name="size" th:value="${pageSize}"/>
+      </form>
+    </div>
+
+    <!-- ── Table ─────────────────────────────────────────────── -->
+    <div class="table-wrapper">
+      <table class="data-table" th:if="${!employees.empty}">
+        <thead>
+        <tr>
+          <th>
+            <a th:href="@{/employees(search=${search}, status=${status}, department=${department},
+                           sortBy='lastName', sortDir=${sortBy == 'lastName' ? reverseSortDir : 'asc'},
+                           size=${pageSize})}">
+              Name
+              <i th:if="${sortBy == 'lastName' and sortDir == 'asc'}" data-feather="chevron-up"></i>
+              <i th:if="${sortBy == 'lastName' and sortDir == 'desc'}" data-feather="chevron-down"></i>
+            </a>
+          </th>
+          <th>Email</th>
+          <th>
+            <a th:href="@{/employees(search=${search}, status=${status}, department=${department},
+                           sortBy='department', sortDir=${sortBy == 'department' ? reverseSortDir : 'asc'},
+                           size=${pageSize})}">
+              Department
+              <i th:if="${sortBy == 'department' and sortDir == 'asc'}" data-feather="chevron-up"></i>
+              <i th:if="${sortBy == 'department' and sortDir == 'desc'}" data-feather="chevron-down"></i>
+            </a>
+          </th>
+          <th>Position</th>
+          <th>
+            <a th:href="@{/employees(search=${search}, status=${status}, department=${department},
+                           sortBy='salary', sortDir=${sortBy == 'salary' ? reverseSortDir : 'desc'},
+                           size=${pageSize})}">
+              Salary
+              <i th:if="${sortBy == 'salary' and sortDir == 'asc'}" data-feather="chevron-up"></i>
+              <i th:if="${sortBy == 'salary' and sortDir == 'desc'}" data-feather="chevron-down"></i>
+            </a>
+          </th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="emp : ${employees.content}">
+          <td>
+            <div class="employee-name">
+              <div class="avatar" th:text="${emp.firstName.charAt(0)} + '' + ${emp.lastName.charAt(0)}"></div>
+              <span th:text="${emp.fullName}"></span>
+            </div>
+          </td>
+          <td th:text="${emp.email}" class="text-muted"></td>
+          <td>
+            <span class="badge badge-dept" th:text="${emp.department}"></span>
+          </td>
+          <td th:text="${emp.position}"></td>
+          <td th:text="${'$' + #numbers.formatDecimal(emp.salary, 1, 'COMMA', 2, 'POINT')}"></td>
+          <td>
+            <span class="badge"
+                  th:classappend="${emp.status.name() == 'ACTIVE' ? 'badge-active' :
+                                   emp.status.name() == 'INACTIVE' ? 'badge-inactive' : 'badge-leave'}"
+                  th:text="${emp.status}"></span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <a th:href="@{/employees/{id}(id=${emp.id})}" class="btn-icon btn-view" title="View">
+                <i data-feather="eye"></i>
+              </a>
+              <a th:href="@{/employees/{id}/edit(id=${emp.id})}" class="btn-icon btn-edit" title="Edit">
+                <i data-feather="edit-2"></i>
+              </a>
+              <form th:action="@{/employees/{id}/delete(id=${emp.id})}" method="post"
+                    onsubmit="return confirm('Delete this employee?')">
+                <button type="submit" class="btn-icon btn-delete" title="Delete">
+                  <i data-feather="trash-2"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty state -->
+      <div th:if="${employees.empty}" class="empty-state">
+        <i data-feather="users" class="empty-icon"></i>
+        <p>No employees found.</p>
+        <a th:href="@{/employees/new}" class="btn btn-primary">Add First Employee</a>
+      </div>
+    </div>
+
+    <!-- ── Pagination ─────────────────────────────────────────── -->
+    <div class="pagination" th:if="${employees.totalPages > 1}">
+      <a th:href="@{/employees(page=0, size=${pageSize}, search=${search}, status=${status},
+                   department=${department}, sortBy=${sortBy}, sortDir=${sortDir})}"
+         class="page-btn" th:classappend="${employees.first} ? 'disabled'">
+        <i data-feather="chevrons-left"></i>
+      </a>
+      <a th:href="@{/employees(page=${employees.number - 1}, size=${pageSize}, search=${search},
+                   status=${status}, department=${department}, sortBy=${sortBy}, sortDir=${sortDir})}"
+         class="page-btn" th:classappend="${employees.first} ? 'disabled'">
+        <i data-feather="chevron-left"></i>
+      </a>
+      <span class="page-info"
+            th:text="'Page ' + (${employees.number + 1}) + ' of ' + ${employees.totalPages}"></span>
+      <a th:href="@{/employees(page=${employees.number + 1}, size=${pageSize}, search=${search},
+                   status=${status}, department=${department}, sortBy=${sortBy}, sortDir=${sortDir})}"
+         class="page-btn" th:classappend="${employees.last} ? 'disabled'">
+        <i data-feather="chevron-right"></i>
+      </a>
+      <a th:href="@{/employees(page=${employees.totalPages - 1}, size=${pageSize}, search=${search},
+                   status=${status}, department=${department}, sortBy=${sortBy}, sortDir=${sortDir})}"
+         class="page-btn" th:classappend="${employees.last} ? 'disabled'">
+        <i data-feather="chevrons-right"></i>
+      </a>
+
+      <div class="page-size-picker">
+        <label>Rows:</label>
+        <select onchange="changePageSize(this.value)" class="form-input">
+          <option value="5"  th:selected="${pageSize == 5}">5</option>
+          <option value="10" th:selected="${pageSize == 10}">10</option>
+          <option value="25" th:selected="${pageSize == 25}">25</option>
+          <option value="50" th:selected="${pageSize == 50}">50</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- result count -->
+    <p class="result-count" th:if="${!employees.empty}"
+       th:text="'Showing ' + ${employees.numberOfElements} + ' of ' + ${employees.totalElements} + ' employees'"></p>
+
+  </div><!-- /container -->
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script th:src="@{/js/app.js}"></script>
+<script>
+  feather.replace();
+
+  function changePageSize(size) {
+    const params = new URLSearchParams(window.location.search);
+    params.set('size', size);
+    params.set('page', '0');
+    window.location.search = params.toString();
+  }
+</script>
+</body>
+</html>
