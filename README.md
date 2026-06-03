@@ -1,145 +1,156 @@
-# EmployeeHub — Full-Stack Java CRUD App
+# EmployeeHub — Spring Boot Employee Management System
 
-A production-ready **Employee Management** CRUD web application built with:
+EmployeeHub is a production-ready full-stack Employee Management CRUD application built using Java Spring Boot, PostgreSQL, Thymeleaf, Hibernate/JPA, and Docker.
 
-- ☕ **Java 21**
-- 🚀 **Spring Boot 3.2**
-- 🐘 **PostgreSQL**
-- 📦 **Gradle** (build tool)
-- 🌿 **Thymeleaf** (server-side templating)
-- 🗃️ **Spring Data JPA + Hibernate**
-- ✅ **Bean Validation (Jakarta)**
-- 🔧 **Lombok**
+The project demonstrates enterprise backend architecture, database integration, cloud deployment, and full CRUD operations.
 
 ---
 
-## Features
+# Live Demo
 
-| Feature | Details |
-|---|---|
-| **CRUD** | Create, Read, Update, Delete employees |
-| **Search** | Live debounced search across name, email, department |
-| **Filter** | Filter by department and employment status |
-| **Sort** | Click column headers to sort ascending/descending |
-| **Pagination** | Server-side pagination with configurable page size |
-| **Validation** | Server-side form validation with inline error messages |
-| **Statistics** | Dashboard cards: total, active, on-leave, departments |
-| **Responsive** | Mobile-friendly CSS layout |
+Add Railway URL here:
 
----
-
-## Project Structure
-
-```
-crudapp/
-├── build.gradle                        # Gradle build config
-├── docker-compose.yml                  # One-command local dev setup
-├── Dockerfile                          # Multi-stage production image
-└── src/
-    ├── main/
-    │   ├── java/com/example/crudapp/
-    │   │   ├── CrudAppApplication.java  # Entry point
-    │   │   ├── controller/
-    │   │   │   ├── HomeController.java
-    │   │   │   └── EmployeeController.java
-    │   │   ├── service/
-    │   │   │   ├── EmployeeService.java
-    │   │   │   └── EmployeeServiceImpl.java
-    │   │   ├── repository/
-    │   │   │   └── EmployeeRepository.java
-    │   │   ├── model/
-    │   │   │   └── Employee.java
-    │   │   ├── dto/
-    │   │   │   └── EmployeeDto.java
-    │   │   └── exception/
-    │   │       ├── ResourceNotFoundException.java
-    │   │       ├── DuplicateEmailException.java
-    │   │       └── GlobalExceptionHandler.java
-    │   └── resources/
-    │       ├── application.yml
-    │       ├── db/
-    │       │   ├── schema.sql           # DDL
-    │       │   └── data.sql             # Seed data
-    │       ├── templates/
-    │       │   ├── employees/
-    │       │   │   ├── list.html        # Employee list with search/filter/pagination
-    │       │   │   ├── form.html        # Create / Edit form
-    │       │   │   └── view.html        # Employee detail
-    │       │   ├── fragments/
-    │       │   │   └── layout.html      # Shared nav/head/footer
-    │       │   └── error.html
-    │       └── static/
-    │           ├── css/app.css
-    │           └── js/app.js
-    └── test/
-        └── java/com/example/crudapp/
-            └── EmployeeServiceTest.java  # Unit tests (Mockito)
+```text
+https://your-app.up.railway.app
 ```
 
 ---
 
-## Quick Start
+# Features
 
-### Option A — Docker Compose (recommended)
+* Employee CRUD operations
+* PostgreSQL database integration
+* Spring Boot MVC architecture
+* Hibernate/JPA ORM
+* Thymeleaf server-side rendering
+* Validation and exception handling
+* Dockerized deployment
+* Railway cloud deployment
+* Production-ready configuration
+* Responsive UI
+
+---
+
+# Tech Stack
+
+## Backend
+
+* Java 21
+* Spring Boot 3
+* Spring MVC
+* Spring Data JPA
+* Hibernate
+
+## Frontend
+
+* Thymeleaf
+* HTML5
+* CSS3
+* JavaScript
+
+## Database
+
+* PostgreSQL
+
+## DevOps / Deployment
+
+* Docker
+* Railway
+* GitHub
+
+---
+
+# Project Architecture
+
+```text
+Controller → Service → Repository → PostgreSQL
+```
+
+### Layers
+
+* Controller Layer
+
+  * Handles HTTP requests
+
+* Service Layer
+
+  * Business logic
+
+* Repository Layer
+
+  * Database operations using JPA
+
+* Database Layer
+
+  * PostgreSQL persistence
+
+---
+
+# Screenshots
+
+Add screenshots here after deployment.
+
+---
+
+# Local Setup
+
+## Clone Repository
 
 ```bash
-# 1. Start PostgreSQL + build and run the app
-docker compose up --build
-
-# 2. Open in browser
-open http://localhost:8080
+git clone https://github.com/vkgonesane/employeehub.git
+cd employeehub
 ```
 
-### Option B — Local PostgreSQL
+## Configure Database
 
-**Prerequisites:** Java 21, PostgreSQL 14+
+Update:
+
+```yaml
+application.yml
+```
+
+## Run Application
 
 ```bash
-# 1. Create the database
-psql -U postgres -c "CREATE DATABASE crudapp_db;"
-
-# 2. Run the app (schema + seed data auto-applied on first run)
-./gradlew bootRun
-
-# 3. Open in browser
-open http://localhost:8080
+gradle bootRun
 ```
 
-**First run only:** set `spring.jpa.hibernate.ddl-auto: create` in `application.yml`, then switch to `validate` for subsequent runs.
+Application runs at:
 
----
-
-## Configuration
-
-All config lives in `src/main/resources/application.yml`.  
-Override with environment variables:
-
-| Env var | Default | Description |
-|---|---|---|
-| `DB_USERNAME` | `postgres` | PostgreSQL username |
-| `DB_PASSWORD` | `postgres` | PostgreSQL password |
-| `SERVER_PORT` | `8080` | HTTP port |
-
----
-
-## Running Tests
-
-```bash
-./gradlew test
+```text
+http://localhost:8080
 ```
 
-Tests use an **H2 in-memory database** — no PostgreSQL needed.
+---
+
+# Deployment
+
+Application deployed using:
+
+* Railway
+* Docker
+* PostgreSQL
 
 ---
 
-## API Endpoints (Web)
+# Learning Outcomes
 
-| Method | URL | Description |
-|---|---|---|
-| `GET` | `/employees` | List all employees (with search/filter/page) |
-| `GET` | `/employees/new` | Show create form |
-| `POST` | `/employees` | Create employee |
-| `GET` | `/employees/{id}` | View employee detail |
-| `GET` | `/employees/{id}/edit` | Show edit form |
-| `POST` | `/employees/{id}` | Update employee |
-| `POST` | `/employees/{id}/delete` | Delete employee |
+This project demonstrates:
+
+* Java enterprise backend development
+* Spring Boot architecture
+* Database schema management
+* Hibernate/JPA integration
+* Cloud deployment
+* Docker containerization
+* Production configuration handling
+* CI/CD workflow using GitHub + Railway
+
+---
+
+# Author
+
+Vaibhav Verma
+
+GitHub:
+https://github.com/vkgonesane
