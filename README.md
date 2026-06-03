@@ -150,7 +150,7 @@ This project demonstrates:
 
 # Author
 
-Vaibhav Verma
+Vaibhav Kumar Verma
 
 GitHub:
 https://github.com/vkgonesane
