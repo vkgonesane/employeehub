@@ -11,7 +11,7 @@ The project demonstrates enterprise backend architecture, database integration, 
 Add Railway URL here:
 
 ```text
-https://your-app.up.railway.app
+https://employeehub-production-c8be.up.railway.app/employees
 ```
 
 ---
